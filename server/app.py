@@ -50,5 +50,66 @@ def protected():
     user = User.query.get(current_user_id)
     return jsonify(logged_in_as=user.username), 200
 
+# Routes for CRUD operations
+@app.route('/entries', methods=['POST'])
+def create_entry():
+    data = request.get_json()
+    new_entry = JournalEntry(
+        title=data['title'],
+        content=data['content'],
+        category=data['category'],
+        user_id=data['user_id']  # Assuming user_id is passed in the request data
+    )
+    db.session.add(new_entry)
+    db.session.commit()
+    return jsonify(message="Journal entry created successfully"), 201
+
+@app.route('/entries', methods=['GET'])
+def get_all_entries():
+    entries = JournalEntry.query.all()
+    return jsonify([{
+        'id': entry.id,
+        'title': entry.title,
+        'content': entry.content,
+        'category': entry.category,
+        'date': entry.date,
+        'user_id': entry.user_id
+    } for entry in entries]), 200
+
+@app.route('/entries/<int:entry_id>', methods=['GET'])
+def get_entry(entry_id):
+    entry = JournalEntry.query.get(entry_id)
+    if not entry:
+        return jsonify(message="Journal entry not found"), 404
+    return jsonify({
+        'id': entry.id,
+        'title': entry.title,
+        'content': entry.content,
+        'category': entry.category,
+        'date': entry.date,
+        'user_id': entry.user_id
+    }), 200
+
+@app.route('/entries/<int:entry_id>', methods=['PUT'])
+def update_entry(entry_id):
+    entry = JournalEntry.query.get(entry_id)
+    if not entry:
+        return jsonify(message="Journal entry not found"), 404
+    data = request.get_json()
+    entry.title = data.get('title', entry.title)
+    entry.content = data.get('content', entry.content)
+    entry.category = data.get('category', entry.category)
+    db.session.commit()
+    return jsonify(message="Journal entry updated successfully"), 200
+
+@app.route('/entries/<int:entry_id>', methods=['DELETE'])
+def delete_entry(entry_id):
+    entry = JournalEntry.query.get(entry_id)
+    if not entry:
+        return jsonify(message="Journal entry not found"), 404
+    db.session.delete(entry)
+    db.session.commit()
+    return jsonify(message="Journal entry deleted successfully"), 200
+
 if __name__ == '__main__':
     app.run(debug=True)

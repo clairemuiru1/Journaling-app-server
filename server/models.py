@@ -9,6 +9,7 @@ bcrypt = Bcrypt()
  
  
 class User(db.Model, SerializerMixin):
+    __tablename__ = 'user'
     # serialize_rules = ("-_password_hash",)  # Exclude password_hash from serialization
  
     id = db.Column(db.Integer, primary_key=True)
@@ -38,10 +39,12 @@ class User(db.Model, SerializerMixin):
             self._password_hash, password.encode('utf-8'))
     
 class JournalEntry(db.Model):
+    __tablename__ = 'journal_entry'  
+
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(200), nullable=False)
     content = db.Column(db.Text, nullable=False)
     category = db.Column(db.String(50), nullable=False)
     date = db.Column(db.DateTime, default=datetime.utcnow)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('User.id'), nullable=False)  # Corrected 'User' to match table name
     user = db.relationship('User', backref=db.backref('entries', lazy=True))
