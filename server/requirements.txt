@@ -4,3 +4,7 @@ Flask-Migrate
 Flask-Cors
 Werkzeug
 bcrypt
+psycopg2-binary
+python-dotenv
+sqlalchemy-serializer
+Flask-JWT-Extended
