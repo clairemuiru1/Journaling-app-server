@@ -9,7 +9,7 @@ bcrypt = Bcrypt()
  
  
 class User(db.Model, SerializerMixin):
-    __tablename__ = 'user'
+    __tablename__ = 'User'
     # serialize_rules = ("-_password_hash",)  # Exclude password_hash from serialization
  
     id = db.Column(db.Integer, primary_key=True)
@@ -40,7 +40,7 @@ class User(db.Model, SerializerMixin):
     
 class JournalEntry(db.Model):
     __tablename__ = 'journal_entry'  
-
+ 
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(200), nullable=False)
     content = db.Column(db.Text, nullable=False)
